@@ -1,0 +1,1560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Cheat Code</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for better aesthetics and animations */
+        body {
+            font-family: 'Inter', sans-serif; /* Using Inter as per instructions */
+        }
+        .card-display {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 4rem; /* Ensure consistent width for cards */
+            height: 5.5rem; /* Ensure consistent height for cards */
+            border-radius: 0.5rem; /* Rounded corners */
+            margin: 0.25rem;
+            padding: 0.5rem;
+            font-size: 1.5rem;
+            font-weight: bold;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        .card-display:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3);
+        }
+        .card-display.red {
+            color: #ef4444; /* Red for Hearts/Diamonds */
+        }
+        .card-display.black {
+            color: #e2e8f0; /* Light gray for Spades/Clubs */
+        }
+        .bg-card-back {
+            background-color: #2d3748; /* Dark blue-gray for card back */
+        }
+        .suit-icon {
+            font-size: 1.2rem;
+            margin-left: 0.25rem;
+        }
+        input[type="text"], input[type="number"] {
+            transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+        }
+        input[type="text"]:focus, input[type="number"]:focus {
+            box-shadow: 0 0 0 3px rgba(52, 211, 153, 0.4); /* Green focus ring */
+        }
+        button {
+            transition: background-color 0.3s ease-in-out, transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3);
+        }
+        /* Simple fade-in for sections */
+        .fade-in {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* Loading spinner for simulation */
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid #34d399; /* Green spinner */
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gray-900 text-gray-100 font-mono p-4 flex flex-col items-center justify-center">
+
+    <div id="app" class="bg-gray-800 p-6 rounded-lg shadow-lg w-full max-w-3xl">
+        <h1 class="text-3xl font-bold text-center mb-6 text-green-400">The Cheat Code</h1>
+
+        <!-- Start Screen -->
+        <div id="start-screen" class="text-center space-y-6 fade-in">
+            <p class="text-xl mb-4">Choose a game to analyze:</p>
+            <div class="flex flex-col md:flex-row justify-center items-center space-y-4 md:space-y-0 md:space-x-4">
+                <button id="choose-poker" class="w-full md:w-auto flex-1 max-w-xs bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-md transition duration-300 ease-in-out transform hover:scale-105">Poker Hand Analyzer</button>
+                <button id="choose-blackjack" class="w-full md:w-auto flex-1 max-w-xs bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-md transition duration-300 ease-in-out transform hover:scale-105">Blackjack Card Analyzer</button>
+            </div>
+            <div class="mt-8 text-sm text-gray-400 text-center">
+                Algorithm and Website by Rohit Mullapudi, Posters by Yuvan and Karthik, Motivated and Inspired by Vishruth (not a member)
+            </div>
+        </div>
+
+        <!-- Poker Instructions Screen -->
+        <div id="poker-instructions-container" class="hidden text-center space-y-4">
+            <h2 class="text-2xl font-bold text-center mb-4 text-yellow-400">Poker Hand Analyzer Instructions</h2>
+            <p class="text-lg">
+                Welcome to the Poker Hand Analyzer! This tool helps you evaluate your poker hand and make strategic decisions.
+            </p>
+            <ul class="list-disc list-inside text-left mx-auto max-w-md space-y-2">
+                <li><strong>Pre-Flop:</strong> Enter your two hole cards, the current pot size, and your bet/call amount. Click "Analyze Pre-Flop".</li>
+                <li><strong>Flop, Turn, River:</strong> As the community cards are dealt, enter them and update the pot/bet amounts. Click "Add Flop/Turn/River & Analyze".</li>
+                <li>The analyzer will show your best hand, its rank, and an estimated win chance against one opponent.</li>
+                <li>Based on your win chance and pot odds, it will provide advice: "Bet", "Check", or "Fold".</li>
+                <li>Use card formats like "As Ks" (Ace of Spades, King of Spades) or "10h 7d" (Ten of Hearts, Seven of Diamonds). Full names like "Ace of Spades" also work.</li>
+            </ul>
+            <div class="flex justify-center space-x-4 mt-6">
+                <button id="poker-start-game-button" class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-md transition duration-300 ease-in-out transform hover:scale-105">Start Poker Game</button>
+                <button id="poker-skip-instructions-button" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-4 rounded-md transition duration-300 ease-in-out transform hover:scale-105">Skip Instructions</button>
+                <button id="poker-instructions-back-to-main" class="bg-gray-700 hover:bg-gray-600 text-white font-bold py-3 px-4 rounded-md transition duration-300 ease-in-out transform hover:scale-105">Back to Main Menu</button>
+            </div>
+        </div>
+
+        <!-- Blackjack Instructions Screen -->
+        <div id="blackjack-instructions-container" class="hidden text-center space-y-4">
+            <h2 class="text-2xl font-bold text-center mb-4 text-yellow-400">Blackjack Card Analyzer Instructions</h2>
+            <p class="text-lg">
+                Use this tool to get probability analysis and advice for your Blackjack hand.
+            </p>
+            <ul class="list-disc list-inside text-left mx-auto max-w-md space-y-2">
+                <li><strong>Initial Deal:</strong> Enter the current pot size, your bet, your two initial cards, and the dealer's single face-up card. Click "Deal Hand".</li>
+                <li>The analyzer will display your hand, the dealer's visible card, and a probability breakdown (Win/Push/Loss) for "Hit", "Stand", and "Double Down" actions.</li>
+                <li>It will then recommend the best action based on these probabilities.</li>
+                <li><strong>Your Turn:
+                    <ul>
+                        <li>If you choose to <strong>Hit</strong> or <strong>Double Down</strong>, a new input section will appear. Re-enter the updated pot/bet, and the new card you received. Click "Confirm Card".</li>
+                        <li>If you choose to <strong>Stand</strong>, the dealer's turn will be simulated automatically.</li>
+                    </ul>
+                </li>
+                <li>The game will conclude with the final outcome. Click "New Blackjack Hand" to start over.</li>
+                <li>Use card formats like "As 10s" (Ace of Spades, Ten of Spades) or "Kh 7c" (King of Hearts, Seven of Clubs).</li>
+            </ul>
+            <div class="flex justify-center space-x-4 mt-6">
+                <button id="blackjack-start-game-button" class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-md transition duration-300 ease-in-out transform hover:scale-105">Start Blackjack Game</button>
+                <button id="blackjack-skip-instructions-button" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-4 rounded-md transition duration-300 ease-in-out transform hover:scale-105">Skip Instructions</button>
+                <button id="blackjack-instructions-back-to-main" class="bg-gray-700 hover:bg-gray-600 text-white font-bold py-3 px-4 rounded-md transition duration-300 ease-in-out transform hover:scale-105">Back to Main Menu</button>
+            </div>
+        </div>
+
+        <!-- Poker App Container -->
+        <div id="poker-app-container" class="hidden">
+            <h2 class="text-2xl font-bold text-center mb-4 text-yellow-400">Poker Hand Analyzer</h2>
+            <!-- Input Section for Poker -->
+            <div id="poker-input-section" class="space-y-4">
+                <!-- Pre-flop inputs -->
+                <div id="preflop-inputs">
+                    <label for="hole-cards" class="block text-lg mb-2">Your Hole Cards (e.g., As Ks, 10h 7d):</label>
+                    <input type="text" id="hole-cards" class="w-full p-3 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:border-green-500 text-white" placeholder="e.g., Ah Kh">
+
+                    <label for="pot-size-preflop" class="block text-lg mt-4 mb-2">Pot Size (in units):</label>
+                    <input type="number" id="pot-size-preflop" class="w-full p-3 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:border-green-500 text-white" placeholder="e.g., 100">
+
+                    <label for="bet-size-preflop" class="block text-lg mt-4 mb-2">Your Bet/Call Amount (in units):</label>
+                    <input type="number" id="bet-size-preflop" class="w-full p-3 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:border-green-500 text-white" placeholder="e.g., 10">
+
+                    <button id="analyze-poker-preflop" class="mt-6 w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-md transition duration-300 ease-in-out transform hover:scale-105">Analyze Pre-Flop</button>
+                </div>
+
+                <!-- Flop inputs (hidden initially) -->
+                <div id="flop-inputs" class="hidden">
+                    <h3 class="text-xl font-bold text-center mb-4 text-blue-400">--- FLOP ---</h3>
+                    <label for="flop-cards" class="block text-lg mb-2">Flop Cards (3 cards, e.g., 5s 6d 7c):</label>
+                    <input type="text" id="flop-cards" class="w-full p-3 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:border-green-500 text-white" placeholder="e.g., 5s 6d 7c">
+
+                    <label for="pot-size-flop" class="block text-lg mt-4 mb-2">Pot Size (in units):</label>
+                    <input type="number" id="pot-size-flop" class="w-full p-3 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:border-green-500 text-white" placeholder="e.g., 0">
+
+                    <label for="bet-size-flop" class="block text-lg mt-4 mb-2">Your Bet/Call Amount (in units):</label>
+                    <input type="number" id="bet-size-flop" class="w-full p-3 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:border-green-500 text-white" placeholder="e.g., 0">
+
+                    <button id="add-flop" class="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-md transition duration-300 ease-in-out transform hover:scale-105">Add Flop & Analyze</button>
+                </div>
+
+                <!-- Turn inputs (hidden initially) -->
+                <div id="turn-inputs" class="hidden">
+                    <h3 class="text-xl font-bold text-center mb-4 text-purple-400">--- TURN ---</h3>
+                    <label for="turn-card" class="block text-lg mb-2">Turn Card (1 card, e.g., Ah):</label>
+                    <input type="text" id="turn-card" class="w-full p-3 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:border-green-500 text-white" placeholder="e.g., Qh">
+
+                    <label for="pot-size-turn" class="block text-lg mt-4 mb-2">Pot Size (in units):</label>
+                    <input type="number" id="pot-size-turn" class="w-full p-3 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:border-green-500 text-white" placeholder="e.g., 0">
+
+                    <label for="bet-size-turn" class="block text-lg mt-4 mb-2">Your Bet/Call Amount (in units):</label>
+                    <input type="number" id="bet-size-turn" class="w-full p-3 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:border-green-500 text-white" placeholder="e.g., 0">
+
+                    <button id="add-turn" class="mt-4 w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-4 rounded-md transition duration-300 ease-in-out transform hover:scale-105">Add Turn & Analyze</button>
+                </div>
+
+                <!-- River inputs (hidden initially) -->
+                <div id="river-inputs" class="hidden">
+                    <h3 class="text-xl font-bold text-center mb-4 text-red-400">--- RIVER ---</h3>
+                    <label for="river-card" class="block text-lg mb-2">River Card (1 card, e.g., Kd):</label>
+                    <input type="text" id="river-card" class="w-full p-3 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:border-green-500 text-white" placeholder="e.g., Js">
+
+                    <label for="pot-size-river" class="block text-lg mt-4 mb-2">Pot Size (in units):</label>
+                    <input type="number" id="pot-size-river" class="w-full p-3 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:border-green-500 text-white" placeholder="e.g., 0">
+
+                    <label for="bet-size-river" class="block text-lg mt-4 mb-2">Your Bet/Call Amount (in units):</label>
+                    <input type="number" id="bet-size-river" class="w-full p-3 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:border-green-500 text-white" placeholder="e.g., 0">
+
+                    <button id="add-river" class="mt-4 w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-md transition duration-300 ease-in-out transform hover:scale-105">Add River & Analyze</button>
+                </div>
+            </div>
+
+            <!-- Poker Output Section -->
+            <div id="poker-output-section" class="mt-8 p-6 bg-gray-700 rounded-lg shadow-inner hidden">
+                <h3 class="text-2xl font-bold text-center mb-4 text-yellow-400">Poker Analysis Results</h3>
+                <div class="space-y-3 text-lg">
+                    <p><strong>Your Hole Cards:</strong> <span id="display-hole-cards" class="text-green-300 flex flex-wrap items-center"></span></p>
+                    <p><strong>Board Cards:</strong> <span id="display-board-cards" class="text-blue-300 flex flex-wrap items-center"></span></p>
+                    <p><strong>Best Hand:</strong> <span id="display-best-hand" class="text-yellow-300"></span></p>
+                    <p><strong>Hand Rank:</strong> <span id="display-hand-rank" class="text-yellow-300"></span></p>
+                    <p><strong>Estimated Win Chance (vs 1 opponent):</strong> <span id="display-poker-win-chance" class="text-purple-300"></span></p>
+                    <p><strong>Pot Odds:</strong> <span id="display-pot-odds" class="text-orange-300"></span></p>
+                    <p><strong>Advice:</strong> <span id="display-poker-advice" class="text-cyan-300 font-bold"></span></p>
+                </div>
+                <button id="poker-reset-button" class="mt-6 w-full bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-4 rounded-md transition duration-300 ease-in-out transform hover:scale-105">Reset Poker Game</button>
+                <button id="poker-back-to-main" class="mt-4 w-full bg-gray-700 hover:bg-gray-600 text-white font-bold py-3 px-4 rounded-md transition duration-300 ease-in-out transform hover:scale-105">Back to Main Menu</button>
+            </div>
+        </div>
+
+        <!-- Blackjack App Container -->
+        <div id="blackjack-app-container" class="hidden">
+            <h2 class="text-2xl font-bold text-center mb-4 text-yellow-400">Blackjack Card Analyzer</h2>
+            <!-- Initial Blackjack Input Section -->
+            <div id="blackjack-initial-input-section" class="space-y-4">
+                <label for="blackjack-pot-size-initial" class="block text-lg mt-4 mb-2">Pot Size (in units):</label>
+                <input type="number" id="blackjack-pot-size-initial" class="w-full p-3 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:border-green-500 text-white" placeholder="e.g., 100">
+
+                <label for="blackjack-bet-amount-initial" class="block text-lg mt-4 mb-2">Your Bet Amount (in units):</label>
+                <input type="number" id="blackjack-bet-amount-initial" class="w-full p-3 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:border-green-500 text-white" placeholder="e.g., 10">
+
+                <label for="player-blackjack-cards-initial" class="block text-lg mb-2">Your Cards (e.g., As 10s):</label>
+                <input type="text" id="player-blackjack-cards-initial" class="w-full p-3 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:border-green-500 text-white" placeholder="e.g., Ah 10h">
+
+                <label for="dealer-up-card-initial" class="block text-lg mt-4 mb-2">Dealer's Up Card (e.g., 7d):</label>
+                <input type="text" id="dealer-up-card-initial" class="w-full p-3 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:border-green-500 text-white" placeholder="e.g., Js">
+
+                <button id="blackjack-deal-button" class="mt-6 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-md transition duration-300 ease-in-out transform hover:scale-105">Analyze Hand</button>
+            </div>
+
+            <!-- Blackjack Action Buttons (visible after initial deal) -->
+            <div id="blackjack-action-buttons" class="flex justify-around mt-6 space-x-4 hidden">
+                <button id="blackjack-hit-button" class="w-1/2 bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-3 px-4 rounded-md transition duration-300 ease-in-out transform hover:scale-105" disabled>Hit</button>
+                <button id="blackjack-stand-button" class="w-1/2 bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-4 rounded-md transition duration-300 ease-in-out transform hover:scale-105" disabled>Stand</button>
+                <button id="blackjack-double-button" class="w-1/2 bg-orange-600 hover:bg-orange-700 text-white font-bold py-3 px-4 rounded-md transition duration-300 ease-in-out transform hover:scale-105" disabled>Double Down</button>
+            </div>
+
+            <!-- Blackjack Next Action Input Section (visible when hitting/doubling) -->
+            <div id="blackjack-next-action-input-section" class="hidden mt-4 space-y-4">
+                <h3 class="text-xl font-bold text-center mb-2 text-blue-400">Update Hand & Pot</h3>
+                <label for="blackjack-pot-size-next" class="block text-lg mt-2 mb-2">Current Pot Size (in units):</label>
+                <input type="number" id="blackjack-pot-size-next" class="w-full p-3 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:border-green-500 text-white" placeholder="e.g., 0">
+
+                <label for="blackjack-bet-amount-next" class="block text-lg mt-2 mb-2">Your Bet Amount (in units):</label>
+                <input type="number" id="blackjack-bet-amount-next" class="w-full p-3 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:border-green-500 text-white" placeholder="e.g., 0">
+
+                <label for="blackjack-new-card" class="block text-lg mb-2">Enter new card received:</label>
+                <input type="text" id="blackjack-new-card" class="w-full p-3 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:border-green-500 text-white" placeholder="e.g., 2c">
+                <button id="blackjack-confirm-next-action-button" class="mt-4 w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-md transition duration-300 ease-in-out transform hover:scale-105">Confirm Card & Re-Analyze</button>
+            </div>
+
+
+            <!-- Blackjack Output Section -->
+            <div id="blackjack-output-section" class="mt-8 p-6 bg-gray-700 rounded-lg shadow-inner hidden">
+                <h3 class="text-2xl font-bold text-center mb-4 text-yellow-400">Blackjack Analysis Results</h3>
+                <div class="space-y-3 text-lg">
+                    <p><strong>Pot Size:</strong> <span id="display-blackjack-pot-size" class="text-orange-300"></span></p>
+                    <p><strong>Your Bet:</strong> <span id="display-blackjack-bet-amount" class="text-orange-300"></span></p>
+                    <p><strong>Your Hand:</strong> <span id="display-player-blackjack-hand" class="text-green-300 flex flex-wrap items-center"></span> (<span id="display-player-blackjack-score"></span>)</p>
+                    <p><strong>Dealer's Hand:</strong> <span id="display-dealer-blackjack-hand" class="text-blue-300 flex flex-wrap items-center"></span> (<span id="display-dealer-blackjack-score"></span>)</p>
+
+                    <h4 class="text-xl font-bold mt-4 mb-2 text-purple-300">Probability Analysis:</h4>
+                    <div id="blackjack-probabilities" class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                        <div>
+                            <p class="font-bold">If you HIT:</p>
+                            <p>Win: <span id="prob-hit-win"></span></p>
+                            <p>Push: <span id="prob-hit-push"></span></p>
+                            <p>Loss: <span id="prob-hit-loss"></span></p>
+                        </div>
+                        <div>
+                            <p class="font-bold">If you STAND:</p>
+                            <p>Win: <span id="prob-stand-win"></span></p>
+                            <p>Push: <span id="prob-stand-push"></span></p>
+                            <p>Loss: <span id="prob-stand-loss"></span></p>
+                        </div>
+                        <div>
+                            <p class="font-bold">If you DOUBLE DOWN:</p>
+                            <p>Win: <span id="prob-double-win"></span></p>
+                            <p>Push: <span id="prob-double-push"></span></p>
+                            <p>Loss: <span id="prob-double-loss"></span></p>
+                        </div>
+                    </div>
+
+                    <p class="mt-4"><strong>Outcome:</strong> <span id="display-blackjack-outcome" class="text-yellow-300 font-bold"></span></p>
+                    <p><strong>Recommended Advice:</strong> <span id="display-blackjack-advice" class="text-cyan-300 font-bold"></span></p>
+                </div>
+                <button id="blackjack-reset-button" class="mt-6 w-full bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-4 rounded-md transition duration-300 ease-in-out transform hover:scale-105">New Blackjack Hand</button>
+                <button id="blackjack-back-to-main" class="mt-4 w-full bg-gray-700 hover:bg-gray-600 text-white font-bold py-3 px-4 rounded-md transition duration-300 ease-in-out transform hover:scale-105">Back to Main Menu</button>
+            </div>
+        </div>
+
+        <!-- Common Message Box & Loading Indicator -->
+        <div id="message-box" class="hidden mt-4 p-4 rounded-md text-center text-lg font-bold" role="alert"></div>
+        <div id="loading-indicator" class="hidden mt-4 p-4 rounded-md text-center text-lg font-bold bg-blue-500 text-white">
+            <span class="spinner"></span> Calculating... Please wait.
+        </div>
+    </div>
+
+    <script>
+        // --- Global State ---
+        let gameMode = 'none'; // 'none', 'poker', 'blackjack'
+
+        // Poker State
+        let pokerHoleCards = [];
+        let pokerBoardCards = [];
+        let pokerCurrentPotSize = 0;
+        let pokerCurrentBetSize = 0;
+        let pokerGameStage = 'pre-flop';
+
+        // --- DOM Elements ---
+        const startScreen = document.getElementById('start-screen');
+        const choosePokerBtn = document.getElementById('choose-poker');
+        const chooseBlackjackBtn = document.getElementById('choose-blackjack');
+
+        // Instruction Screens
+        const pokerInstructionsContainer = document.getElementById('poker-instructions-container');
+        const blackjackInstructionsContainer = document.getElementById('blackjack-instructions-container');
+        const pokerStartGameButton = document.getElementById('poker-start-game-button');
+        const pokerSkipInstructionsButton = document.getElementById('poker-skip-instructions-button');
+        const blackjackStartGameButton = document.getElementById('blackjack-start-game-button');
+        const blackjackSkipInstructionsButton = document.getElementById('blackjack-skip-instructions-button');
+        const pokerInstructionsBackToMainBtn = document.getElementById('poker-instructions-back-to-main');
+        const blackjackInstructionsBackToMainBtn = document.getElementById('blackjack-instructions-back-to-main');
+
+
+        const pokerAppContainer = document.getElementById('poker-app-container');
+        const blackjackAppContainer = document.getElementById('blackjack-app-container');
+
+        // Poker DOM Elements
+        const pokerPreflopInputsDiv = document.getElementById('preflop-inputs');
+        const pokerFlopInputsDiv = document.getElementById('flop-inputs');
+        const pokerTurnInputsDiv = document.getElementById('turn-inputs');
+        const pokerRiverInputsDiv = document.getElementById('river-inputs');
+        const pokerOutputSectionDiv = document.getElementById('poker-output-section');
+
+        const pokerHoleCardsInput = document.getElementById('hole-cards');
+        const pokerPotSizePreflopInput = document.getElementById('pot-size-preflop');
+        const pokerBetSizePreflopInput = document.getElementById('bet-size-preflop');
+        const analyzePokerPreflopBtn = document.getElementById('analyze-poker-preflop');
+
+        const pokerFlopCardsInput = document.getElementById('flop-cards');
+        const pokerPotSizeFlopInput = document.getElementById('pot-size-flop');
+        const pokerBetSizeFlopInput = document.getElementById('bet-size-flop');
+        const pokerAddFlopBtn = document.getElementById('add-flop');
+
+        const pokerTurnCardInput = document.getElementById('turn-card');
+        const pokerPotSizeTurnInput = document.getElementById('pot-size-turn');
+        const pokerBetSizeTurnInput = document.getElementById('bet-size-turn');
+        const pokerAddTurnBtn = document.getElementById('add-turn');
+
+        const pokerRiverCardInput = document.getElementById('river-card');
+        const pokerPotSizeRiverInput = document.getElementById('pot-size-river');
+        const pokerBetSizeRiverInput = document.getElementById('bet-size-river');
+        const pokerAddRiverBtn = document.getElementById('add-river');
+
+        const pokerResetBtn = document.getElementById('poker-reset-button');
+        const pokerBackToMainBtn = document.getElementById('poker-back-to-main');
+
+        const displayPokerHoleCards = document.getElementById('display-hole-cards');
+        const displayPokerBoardCards = document.getElementById('display-board-cards');
+        const displayPokerBestHand = document.getElementById('display-best-hand');
+        const displayPokerHandRank = document.getElementById('display-hand-rank');
+        const displayPokerWinChance = document.getElementById('display-poker-win-chance');
+        const displayPokerPotOdds = document.getElementById('display-pot-odds');
+        const displayPokerAdvice = document.getElementById('display-poker-advice');
+
+        // Blackjack DOM Elements
+        const blackjackInitialInputSection = document.getElementById('blackjack-initial-input-section');
+        const blackjackPotSizeInitialInput = document.getElementById('blackjack-pot-size-initial');
+        const blackjackBetAmountInitialInput = document.getElementById('blackjack-bet-amount-initial');
+        const blackjackPlayerCardsInitialInput = document.getElementById('player-blackjack-cards-initial');
+        const blackjackDealerUpCardInitialInput = document.getElementById('dealer-up-card-initial');
+
+        const blackjackDealButton = document.getElementById('blackjack-deal-button');
+        const blackjackActionButtons = document.getElementById('blackjack-action-buttons');
+        const blackjackHitButton = document.getElementById('blackjack-hit-button');
+        const blackjackStandButton = document.getElementById('blackjack-stand-button');
+        const blackjackDoubleButton = document.getElementById('blackjack-double-button');
+
+        const blackjackNextActionInputSection = document.getElementById('blackjack-next-action-input-section');
+        const blackjackPotSizeNextInput = document.getElementById('blackjack-pot-size-next');
+        const blackjackBetAmountNextInput = document.getElementById('blackjack-bet-amount-next');
+        const blackjackNewCardInput = document.getElementById('blackjack-new-card');
+        const blackjackConfirmNextActionButton = document.getElementById('blackjack-confirm-next-action-button');
+
+        const blackjackOutputSection = document.getElementById('blackjack-output-section');
+        const displayBlackjackPotSize = document.getElementById('display-blackjack-pot-size');
+        const displayBlackjackBetAmount = document.getElementById('display-blackjack-bet-amount');
+        const displayBlackjackPlayerHand = document.getElementById('display-player-blackjack-hand');
+        const displayBlackjackPlayerScore = document.getElementById('display-player-blackjack-score');
+        const displayBlackjackDealerHand = document.getElementById('display-dealer-blackjack-hand');
+        const displayBlackjackDealerScore = document.getElementById('display-dealer-blackjack-score');
+        const displayBlackjackOutcome = document.getElementById('display-blackjack-outcome');
+        const displayBlackjackAdvice = document.getElementById('display-blackjack-advice');
+        const blackjackResetButton = document.getElementById('blackjack-reset-button');
+        const blackjackBackToMainBtn = document.getElementById('blackjack-back-to-main');
+
+        // Blackjack Probability Display Elements
+        const probHitWin = document.getElementById('prob-hit-win');
+        const probHitPush = document.getElementById('prob-hit-push');
+        const probHitLoss = document.getElementById('prob-hit-loss');
+        const probStandWin = document.getElementById('prob-stand-win');
+        const probStandPush = document.getElementById('prob-stand-push');
+        const probStandLoss = document.getElementById('prob-stand-loss');
+        const probDoubleWin = document.getElementById('prob-double-win');
+        const probDoublePush = document.getElementById('prob-double-push');
+        const probDoubleLoss = document.getElementById('prob-double-loss');
+
+
+        const messageBox = document.getElementById('message-box');
+        const loadingIndicator = document.getElementById('loading-indicator');
+
+        // --- Deck Setup (Common for both games) ---
+        const suitsMap = {
+            's': '♠', 'spade': '♠', 'spades': '♠', '♠': '♠',
+            'h': '♥', 'heart': '♥', 'hearts': '♥', '♥': '♥',
+            'd': '♦', 'diamond': '♦', 'diamonds': '♦', '♦': '♦',
+            'c': '♣', 'club': '♣', 'clubs': '♣', '♣': '♣'
+        };
+        const ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
+        const rankValues = {};
+        ranks.forEach((r, i) => rankValues[r] = i + 2); // 2 -> 2, A -> 14
+
+        // New: Comprehensive rank name mapping
+        const rankNamesMap = {
+            '2': '2', 'two': '2',
+            '3': '3', 'three': '3',
+            '4': '4', 'four': '4',
+            '5': '5', 'five': '5',
+            '6': '6', 'six': '6',
+            '7': '7', 'seven': '7',
+            '8': '8', 'eight': '8',
+            '9': '9', 'nine': '9',
+            '10': '10', 'ten': '10',
+            'j': 'J', 'jack': 'J',
+            'q': 'Q', 'queen': 'Q',
+            'k': 'K', 'king': 'K',
+            'a': 'A', 'ace': 'A'
+        };
+
+        let commonDeck = [];
+        function initializeCommonDeck() {
+            commonDeck = [];
+            for (const rank of ranks) {
+                for (const suitSymbol of ['♠', '♥', '♦', '♣']) {
+                    commonDeck.push(rank + suitSymbol);
+                }
+            }
+        }
+        initializeCommonDeck();
+
+        // --- Utility Functions ---
+        function showMessage(message, type = 'error') {
+            console.log(`[MESSAGE_BOX] ${type.toUpperCase()}: ${message}`); // Debugging log
+            messageBox.textContent = message;
+            messageBox.className = `mt-4 p-4 rounded-md text-center text-lg font-bold ${type === 'error' ? 'bg-red-500 text-white' : 'bg-green-500 text-white'} fade-in`;
+            messageBox.classList.remove('hidden');
+            setTimeout(() => {
+                messageBox.classList.add('hidden');
+            }, 5000); // Hide after 5 seconds
+        }
+
+        function showLoading(show) {
+            console.log(`[LOADING_INDICATOR] ${show ? 'Showing' : 'Hiding'}`); // Debugging log
+            if (show) {
+                loadingIndicator.classList.remove('hidden');
+                loadingIndicator.classList.add('fade-in');
+            } else {
+                loadingIndicator.classList.add('hidden');
+                loadingIndicator.classList.remove('fade-in');
+            }
+        }
+
+        function prettyCards(cards) {
+            if (!cards || cards.length === 0) return '';
+            return cards.map(card => {
+                const rank = card.slice(0, -1);
+                const suit = card.slice(-1);
+                const isRed = suit === '♥' || suit === '♦';
+                return `<div class="card-display bg-card-back ${isRed ? 'red' : 'black'}">
+                            ${rank}<span class="suit-icon">${suit}</span>
+                        </div>`;
+            }).join('');
+        }
+
+        // --- Card Parsing (Common for both games) ---
+        function parseCards(text) {
+            if (!text) return [];
+            text = text.toLowerCase().replace(/of/g, "").trim(); // Remove "of", trim whitespace
+
+            const rankRegexPart = '(10|[2-9jqka]|ace|king|queen|jack|two|three|four|five|six|seven|eight|nine|ten)';
+            const suitRegexPart = '(spades|hearts|diamonds|clubs|[shdc♠♥♦♣])';
+            const cardPattern = new RegExp(`${rankRegexPart}\\s*${suitRegexPart}`, 'gi');
+
+            let found = new Set();
+            let match;
+            while ((match = cardPattern.exec(text)) !== null) {
+                let rankRaw = match[1].toLowerCase();
+                let suitRaw = match[2].toLowerCase();
+
+                let rankSymbol = rankNamesMap[rankRaw];
+                let suitSymbol = suitsMap[suitRaw];
+
+                if (rankSymbol && suitSymbol) {
+                    found.add(rankSymbol + suitSymbol);
+                }
+            }
+            console.log(`[PARSE_CARDS] Parsed "${text}" into:`, Array.from(found)); // Debugging log
+            return Array.from(found);
+        }
+
+        // --- Screen Management ---
+        function showScreen(screenId) {
+            console.log(`[SCREEN_MANAGER] Showing screen: ${screenId}`); // Debugging log
+            startScreen.classList.add('hidden');
+            pokerAppContainer.classList.add('hidden');
+            blackjackAppContainer.classList.add('hidden');
+            pokerInstructionsContainer.classList.add('hidden');
+            blackjackInstructionsContainer.classList.add('hidden');
+
+
+            document.getElementById(screenId).classList.remove('hidden');
+            document.getElementById(screenId).classList.add('fade-in');
+        }
+
+        function backToMainMenu() {
+            console.log('[SCREEN_MANAGER] Returning to main menu'); // Debugging log
+            pokerAppContainer.classList.add('hidden');
+            blackjackAppContainer.classList.add('hidden');
+            pokerInstructionsContainer.classList.add('hidden');
+            blackjackInstructionsContainer.classList.add('hidden');
+            startScreen.classList.remove('hidden');
+            startScreen.classList.add('fade-in');
+            resetPokerGame();
+            blackjackGame.resetGame(); // Use the new reset method for blackjack
+        }
+
+        // --- Poker Logic (Adapted from previous version) ---
+        function evaluatePokerHand(cards) {
+            if (!cards || cards.length === 0) {
+                return [0, "No Cards"];
+            }
+
+            const values = cards.map(c => rankValues[c.slice(0, -1)]).sort((a, b) => b - a);
+            const suits = cards.map(c => c.slice(-1));
+
+            const valCount = {};
+            values.forEach(val => valCount[val] = (valCount[val] || 0) + 1);
+
+            const suitCount = {};
+            suits.forEach(suit => suitCount[suit] = (suitCount[suit] || 0) + 1);
+
+            const isFlush = Object.values(suitCount).some(count => count >= 5);
+            const [isStraight, highStraightCard] = isPokerStraightCheck(values);
+
+            if (isFlush && isStraight) {
+                const royalFlushRanks = [14, 13, 12, 11, 10];
+                const hasRoyalRanks = royalFlushRanks.every(r => values.includes(r));
+                const flushSuit = Object.keys(suitCount).find(suit => suitCount[suit] >= 5);
+                const flushCards = cards.filter(c => c.endsWith(flushSuit));
+                const flushValues = flushCards.map(c => rankValues[c.slice(0, -1)]).sort((a, b) => b - a);
+                const [isFlushStraight, highFlushStraightCard] = isPokerStraightCheck(flushValues);
+
+                if (isFlushStraight && highFlushStraightCard === 14 && hasRoyalRanks) {
+                    return [10, "Royal Flush"];
+                } else if (isFlushStraight) {
+                    return [9, "Straight Flush"];
+                }
+            }
+
+            if (Object.values(valCount).includes(4)) {
+                return [8, "Four of a Kind"];
+            }
+
+            const hasThree = Object.values(valCount).includes(3);
+            const numPairs = Object.values(valCount).filter(count => count === 2).length;
+            if (hasThree && numPairs >= 1) {
+                return [7, "Full House"];
+            }
+
+            if (isFlush) {
+                return [6, "Flush"];
+            }
+
+            if (isStraight) {
+                return [5, "Straight"];
+            }
+
+            if (hasThree) {
+                return [4, "Three of a Kind"];
+            }
+
+            if (numPairs >= 2) {
+                return [3, "Two Pair"];
+            }
+
+            if (numPairs === 1) {
+                return [2, "One Pair"];
+            }
+
+            const highCardRank = ranks[values[0] - 2];
+            return [1, `High Card (${highCardRank})`];
+        }
+
+        function isPokerStraightCheck(values) {
+            const unique = Array.from(new Set(values)).sort((a, b) => b - a);
+            if (unique.includes(14)) {
+                unique.push(1);
+            }
+            unique.sort((a, b) => b - a);
+
+            for (let i = 0; i <= unique.length - 5; i++) {
+                if (unique[i] - unique[i + 4] === 4) {
+                    return [true, unique[i]];
+                }
+            }
+            return [false, null];
+        }
+
+        async function simulatePokerWin(hole, board = [], simulations = 1000) {
+            showLoading(true);
+            let wins = 0;
+            const known = Array.from(new Set([...hole, ...board]));
+
+            let tempDeckFull = commonDeck.filter(card => !known.includes(card));
+
+            for (let i = 0; i < simulations; i++) {
+                let currentSimDeck = [...tempDeckFull];
+                for (let j = currentSimDeck.length - 1; j > 0; j--) {
+                    const k = Math.floor(Math.random() * (j + 1));
+                    [currentSimDeck[j], currentSimDeck[k]] = [currentSimDeck[k], currentSimDeck[j]];
+                }
+
+                if (currentSimDeck.length < (2 + (5 - board.length))) {
+                    console.warn("[POKER_SIM] Not enough cards left in the deck for a full simulation. Skipping this iteration.");
+                    continue;
+                }
+
+                const opp = currentSimDeck.splice(0, 2);
+                const remainingBoardCount = 5 - board.length;
+                const fullBoard = [...board, ...currentSimDeck.splice(0, remainingBoardCount)];
+
+                const [myRank, _] = evaluatePokerHand([...hole, ...fullBoard]);
+                const [oppRank, __] = evaluatePokerHand([...opp, ...fullBoard]);
+
+                if (myRank > oppRank) {
+                    wins += 1;
+                }
+                if (i % 100 === 0) {
+                    await new Promise(resolve => setTimeout(resolve, 0));
+                }
+            }
+            showLoading(false);
+            return wins / simulations;
+        }
+
+        function givePokerAdvice(winProb, potSize, betSize) {
+            const potOdds = (potSize + betSize) > 0 ? betSize / (potSize + betSize) : 0;
+            let adviceText = "";
+            let adviceColor = "";
+
+            if (winProb > potOdds * 1.05) {
+                adviceText = "Bet (you have good equity)";
+                adviceColor = "text-green-500";
+            } else if (Math.abs(winProb - potOdds) < 0.05) {
+                adviceText = "Check (it's close)";
+                adviceColor = "text-yellow-500";
+            } else {
+                adviceText = "Fold (not profitable)";
+                adviceColor = "text-red-500";
+            }
+            return { potOdds: potOdds, advice: adviceText, adviceColor: adviceColor };
+        }
+
+        async function updatePokerStatus() {
+            console.log('[POKER] Updating Poker Status...');
+            pokerOutputSectionDiv.classList.remove('hidden');
+            pokerOutputSectionDiv.classList.add('fade-in');
+
+            displayPokerHoleCards.innerHTML = prettyCards(pokerHoleCards);
+            displayPokerBoardCards.innerHTML = prettyCards(pokerBoardCards);
+
+            const [rank, name] = evaluatePokerHand([...pokerHoleCards, ...pokerBoardCards]);
+            displayPokerBestHand.textContent = name;
+            displayPokerHandRank.textContent = `${rank}/10`;
+
+            const winProb = await simulatePokerWin(pokerHoleCards, pokerBoardCards);
+            displayPokerWinChance.textContent = `${(winProb * 100).toFixed(2)}%`;
+
+            const { potOdds, advice, adviceColor } = givePokerAdvice(winProb, pokerCurrentPotSize, pokerCurrentBetSize);
+            displayPokerPotOdds.textContent = `${(potOdds * 100).toFixed(2)}% (${pokerCurrentBetSize} units into a pot of ${pokerCurrentPotSize} units)`;
+            displayPokerAdvice.textContent = advice;
+            displayPokerAdvice.className = `text-cyan-300 font-bold ${adviceColor}`;
+            console.log('[POKER] Poker Status Updated.');
+        }
+
+        function resetPokerGame() {
+            console.log('[POKER] Resetting Poker Game...');
+            pokerGameStage = 'pre-flop';
+            pokerHoleCards = [];
+            pokerBoardCards = [];
+            pokerCurrentPotSize = 0;
+            pokerCurrentBetSize = 0;
+
+            pokerHoleCardsInput.value = '';
+            pokerPotSizePreflopInput.value = ''; // Made optional
+            pokerBetSizePreflopInput.value = ''; // Made optional
+            pokerFlopCardsInput.value = '';
+            pokerPotSizeFlopInput.value = ''; // Made optional
+            pokerBetSizeFlopInput.value = ''; // Made optional
+            pokerTurnCardInput.value = '';
+            pokerPotSizeTurnInput.value = ''; // Made optional
+            pokerBetSizeTurnInput.value = ''; // Made optional
+            pokerRiverCardInput.value = '';
+            pokerPotSizeRiverInput.value = ''; // Made optional
+            pokerBetSizeRiverInput.value = ''; // Made optional
+
+            pokerPreflopInputsDiv.classList.remove('hidden');
+            pokerPreflopInputsDiv.classList.add('fade-in');
+            pokerFlopInputsDiv.classList.add('hidden');
+            pokerTurnInputsDiv.classList.add('hidden');
+            pokerRiverInputsDiv.classList.add('hidden');
+            pokerOutputSectionDiv.classList.add('hidden');
+            messageBox.classList.add('hidden');
+            initializeCommonDeck();
+            console.log('[POKER] Poker Game Reset.');
+        }
+
+        // --- Blackjack Logic (Rewritten) ---
+        class BlackjackGame {
+            constructor() {
+                this.playerHand = [];
+                this.dealerHand = []; // dealerHand[0] is up card, dealerHand[1] is hole card
+                this.deck = [];
+                this.isPlayerTurn = true;
+                this.hasDoubledDown = false;
+                this.currentPotSize = 0;
+                this.currentBetAmount = 0;
+                this.simulations = 5000;
+                this.currentAction = ''; // 'hit', 'double', 'stand'
+                this.dealerHandRevealed = false; // New state to control dealer card visibility
+            }
+
+            initializeGame() {
+                console.log('[BJ_GAME] Initializing new Blackjack game state.');
+                this.playerHand = [];
+                this.dealerHand = [];
+                this.deck = [];
+                this.isPlayerTurn = true;
+                this.hasDoubledDown = false;
+                this.currentPotSize = 0;
+                this.currentBetAmount = 0;
+                this.currentAction = '';
+                this.dealerHandRevealed = false; // Reset on new game
+
+                // Re-initialize a full deck for Blackjack
+                initializeCommonDeck(); // Ensures commonDeck is full
+                this.deck = [...commonDeck]; // Copy a fresh deck
+                this.shuffleDeck();
+                console.log(`[BJ_GAME] Deck initialized and shuffled. Size: ${this.deck.length}`);
+            }
+
+            shuffleDeck() {
+                for (let i = this.deck.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [this.deck[i], this.deck[j]] = [this.deck[j], this.deck[i]];
+                }
+                console.log('[BJ_GAME] Deck shuffled.');
+            }
+
+            drawCard() {
+                if (this.deck.length === 0) {
+                    console.error('[BJ_GAME] Attempted to draw from an empty deck!');
+                    showMessage("Error: Ran out of cards in the deck. This shouldn't happen during normal play. Please reset.", 'error');
+                    return null;
+                }
+                const card = this.deck.shift();
+                console.log(`[BJ_GAME] Card drawn: ${card}. Deck size remaining: ${this.deck.length}`);
+                return card;
+            }
+
+            calculateHandValue(cards) {
+                let value = 0;
+                let numAces = 0;
+                for (const card of cards) {
+                    const rank = card.slice(0, -1);
+                    if (rank === 'A') {
+                        numAces++;
+                        value += 11;
+                    } else if (['K', 'Q', 'J', '10'].includes(rank)) {
+                        value += 10;
+                    } else {
+                        value += parseInt(rank);
+                    }
+                }
+                while (value > 21 && numAces > 0) {
+                    value -= 10;
+                    numAces--;
+                }
+                return value;
+            }
+
+            getOutcome(playerHand, dealerHand) {
+                const playerValue = this.calculateHandValue(playerHand);
+                const dealerValue = this.calculateHandValue(dealerHand);
+
+                if (playerValue > 21) return "Bust! Dealer Wins.";
+                if (dealerValue > 21) return "Dealer Busts! You Win!";
+                if (playerValue === 21 && playerHand.length === 2 && dealerValue !== 21) return "Blackjack! You Win!";
+                if (dealerValue === 21 && dealerHand.length === 2 && playerValue !== 21) return "Dealer Blackjack! Dealer Wins.";
+                if (playerValue > dealerValue) return "You Win!";
+                if (dealerValue > playerValue) return "Dealer Wins.";
+                return "Push.";
+            }
+
+            getRecommendedAdvice(probabilities) {
+                let bestAction = 'Stand';
+                let maxWinProb = -1;
+
+                const hitWinProb = parseFloat(probabilities.hit.probWin);
+                const standWinProb = parseFloat(probabilities.stand.probWin);
+                const doubleWinProb = parseFloat(probabilities.double.probWin);
+
+                if (!isNaN(standWinProb)) {
+                    maxWinProb = standWinProb;
+                }
+
+                if (!isNaN(hitWinProb) && hitWinProb > maxWinProb) {
+                    maxWinProb = hitWinProb;
+                    bestAction = 'Hit';
+                }
+                if (!isNaN(doubleWinProb) && doubleWinProb > maxWinProb) {
+                    maxWinProb = doubleWinProb;
+                    bestAction = 'Double Down';
+                }
+                
+                if (maxWinProb === -1) {
+                    return "Cannot provide advice (invalid hand or game state).";
+                }
+
+                return `Recommended: ${bestAction}`;
+            }
+
+            async simulateOneBlackjackHand(simPlayerHand, simDealerUpCard, simDeck, playerAction) {
+                let tempDeck = [...simDeck];
+                // Shuffle the temporary deck for this simulation run
+                for (let i = tempDeck.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [tempDeck[i], tempDeck[j]] = [tempDeck[j], tempDeck[i]];
+                }
+
+                let currentSimPlayerHand = [...simPlayerHand];
+                let currentSimDealerHand = [simDealerUpCard];
+
+                // Draw dealer's hole card for simulation
+                if (tempDeck.length === 0) {
+                    console.warn("[BJ_SIM] Not enough cards in tempDeck for dealer's hole card in simulation.");
+                    return 'error';
+                }
+                currentSimDealerHand.push(tempDeck.shift());
+
+                // Player's turn based on action
+                if (playerAction === 'hit') {
+                    if (tempDeck.length === 0) {
+                        console.warn("[BJ_SIM] Not enough cards in tempDeck for player hit in simulation.");
+                        return 'error';
+                    }
+                    currentSimPlayerHand.push(tempDeck.shift());
+                } else if (playerAction === 'double') {
+                    if (tempDeck.length === 0) {
+                        console.warn("[BJ_SIM] Not enough cards in tempDeck for player double in simulation.");
+                        return 'error';
+                    }
+                    currentSimPlayerHand.push(tempDeck.shift());
+                }
+
+                // Check for player bust immediately after player's action in simulation
+                if (this.calculateHandValue(currentSimPlayerHand) > 21) {
+                    return 'loss'; // Player busted in simulation
+                }
+
+                // Dealer's turn in simulation
+                while (this.calculateHandValue(currentSimDealerHand) < 17) {
+                    if (tempDeck.length === 0) {
+                        console.warn("[BJ_SIM] Not enough cards in tempDeck for dealer hit in simulation.");
+                        return 'error';
+                    }
+                    currentSimDealerHand.push(tempDeck.shift());
+                }
+
+                // Determine final outcome for this simulation
+                const outcome = this.getOutcome(currentSimPlayerHand, currentSimDealerHand);
+                if (outcome.includes("Win")) return 'win';
+                if (outcome.includes("Push")) return 'push';
+                return 'loss';
+            }
+
+            async calculateProbabilities(playerHand, dealerUpCard, currentDeck, actionType) {
+                console.log(`[BJ_PROB] Calculating probabilities for ${actionType} with ${this.simulations} simulations.`);
+                let wins = 0;
+                let pushes = 0;
+                let losses = 0;
+                let validSimulations = 0;
+
+                for (let i = 0; i < this.simulations; i++) {
+                    const outcome = await this.simulateOneBlackjackHand(playerHand, dealerUpCard, currentDeck, actionType);
+                    if (outcome === 'win') {
+                        wins++;
+                        validSimulations++;
+                    } else if (outcome === 'push') {
+                        pushes++;
+                        validSimulations++;
+                    } else if (outcome === 'loss') {
+                        losses++;
+                        validSimulations++;
+                    }
+                    // If outcome is 'error', it means not enough cards for a full simulation, skip it.
+                    if (i % 1000 === 0) {
+                        await new Promise(resolve => setTimeout(resolve, 0)); // Yield for UI responsiveness
+                    }
+                }
+
+                if (validSimulations === 0) {
+                    console.warn(`[BJ_PROB] No valid simulations completed for action '${actionType}'. Deck might be too small or initial state is invalid.`);
+                    return { probWin: 'N/A', probPush: 'N/A', probLoss: 'N/A' };
+                }
+
+                const result = {
+                    probWin: wins / validSimulations,
+                    probPush: pushes / validSimulations,
+                    probLoss: losses / validSimulations
+                };
+                console.log(`[BJ_PROB] Results for ${actionType}:`, result);
+                return result;
+            }
+
+            async updateUI(isInitialDeal = false) {
+                console.log('[BJ_UI] updateUI called. isInitialDeal:', isInitialDeal);
+                blackjackOutputSection.classList.remove('hidden');
+                blackjackOutputSection.classList.add('fade-in');
+
+                const playerValue = this.calculateHandValue(this.playerHand);
+                const dealerUpCardValue = this.calculateHandValue([this.dealerHand[0]]);
+                const dealerFullHandValue = this.calculateHandValue(this.dealerHand);
+
+                displayBlackjackPotSize.textContent = `${this.currentPotSize} units`;
+                displayBlackjackBetAmount.textContent = `${this.currentBetAmount} units`;
+
+                displayBlackjackPlayerHand.innerHTML = prettyCards(this.playerHand);
+                displayBlackjackPlayerScore.textContent = playerValue;
+
+                // Display dealer's hand based on dealerHandRevealed state
+                const dealerDisplayHand = this.dealerHandRevealed ? this.dealerHand : [this.dealerHand[0], '??'];
+                displayBlackjackDealerHand.innerHTML = prettyCards(dealerDisplayHand);
+                displayBlackjackDealerScore.textContent = this.dealerHandRevealed ? dealerFullHandValue : dealerUpCardValue;
+
+
+                // Reset probability displays
+                probHitWin.textContent = probHitPush.textContent = probHitLoss.textContent = 'N/A';
+                probStandWin.textContent = probStandPush.textContent = probStandLoss.textContent = 'N/A';
+                probDoubleWin.textContent = probDoublePush.textContent = probDoubleLoss.textContent = 'N/A';
+
+                // Hide outcome and advice until game is over or initial deal
+                displayBlackjackOutcome.textContent = "";
+                displayBlackjackOutcome.classList.add('hidden');
+                displayBlackjackAdvice.textContent = "";
+
+                blackjackDealButton.disabled = true;
+                blackjackInitialInputSection.classList.add('hidden');
+                blackjackNextActionInputSection.classList.add('hidden');
+
+                if (this.isPlayerTurn) {
+                    console.log('[BJ_UI] Player turn. Calculating probabilities...');
+                    blackjackActionButtons.classList.remove('hidden');
+                    blackjackActionButtons.classList.add('fade-in');
+
+                    showLoading(true);
+                    const results = {
+                        hit: { probWin: 'N/A', probPush: 'N/A', probLoss: 'N/A' },
+                        stand: { probWin: 'N/A', probPush: 'N/A', probLoss: 'N/A' },
+                        double: { probWin: 'N/A', probPush: 'N/A', probLoss: 'N/A' }
+                    };
+
+                    if (playerValue < 21) {
+                        // Pass a copy of the current deck for simulations
+                        results.hit = await this.calculateProbabilities(this.playerHand, this.dealerHand[0], [...this.deck], 'hit');
+                        probHitWin.textContent = `${(parseFloat(results.hit.probWin) * 100).toFixed(2)}%`;
+                        probHitPush.textContent = `${(parseFloat(results.hit.probPush) * 100).toFixed(2)}%`;
+                        probHitLoss.textContent = `${(parseFloat(results.hit.probLoss) * 100).toFixed(2)}%`;
+
+                        results.stand = await this.calculateProbabilities(this.playerHand, this.dealerHand[0], [...this.deck], 'stand');
+                        probStandWin.textContent = `${(parseFloat(results.stand.probWin) * 100).toFixed(2)}%`;
+                        probStandPush.textContent = `${(parseFloat(results.stand.probPush) * 100).toFixed(2)}%`;
+                        probStandLoss.textContent = `${(parseFloat(results.stand.probLoss) * 100).toFixed(2)}%`;
+
+                        if (this.playerHand.length === 2 && !this.hasDoubledDown) {
+                            results.double = await this.calculateProbabilities(this.playerHand, this.dealerHand[0], [...this.deck], 'double');
+                            probDoubleWin.textContent = `${(parseFloat(results.double.probWin) * 100).toFixed(2)}%`;
+                            probDoublePush.textContent = `${(parseFloat(results.double.probPush) * 100).toFixed(2)}%`;
+                            probDoubleLoss.textContent = `${(parseFloat(results.double.probLoss) * 100).toFixed(2)}%`;
+                        }
+                    }
+                    showLoading(false);
+                    console.log('[BJ_UI] Probabilities calculated:', results);
+
+                    displayBlackjackAdvice.textContent = this.getRecommendedAdvice(results);
+
+                    blackjackHitButton.disabled = playerValue >= 21 || this.hasDoubledDown;
+                    blackjackStandButton.disabled = false;
+                    blackjackDoubleButton.disabled = this.playerHand.length !== 2 || this.hasDoubledDown;
+
+                } else {
+                    // This block is entered if player's turn has ended (bust, blackjack, or explicit stand)
+                    console.log('[BJ_UI] Player turn ended. Displaying final outcome or stand message.');
+                    blackjackActionButtons.classList.add('hidden');
+
+                    if (playerValue > 21) {
+                        console.log('[BJ_UI] Player busted.');
+                        displayBlackjackOutcome.textContent = "Bust! Dealer Wins.";
+                        this.dealerHandRevealed = true; // Reveal dealer's hand if player busts
+                        displayBlackjackDealerHand.innerHTML = prettyCards(this.dealerHand);
+                        displayBlackjackDealerScore.textContent = this.calculateHandValue(this.dealerHand);
+                    } else if (playerValue === 21 && this.playerHand.length === 2) {
+                        console.log('[BJ_UI] Player has Blackjack.');
+                        displayBlackjackOutcome.textContent = "Blackjack! Proceeding to dealer's turn.";
+                        // Dealer's turn will be called after this, which will reveal the hand
+                    } else { // Player explicitly stood
+                        console.log('[BJ_UI] Player explicitly stood. Ending analysis.');
+                        displayBlackjackOutcome.textContent = "Player Stood. Analysis Complete.";
+                        // Dealer's hand remains hidden as per request
+                    }
+
+                    displayBlackjackOutcome.classList.remove('hidden');
+                    displayBlackjackAdvice.textContent = "Game Over. Click 'New Blackjack Hand' to play again.";
+                    blackjackHitButton.disabled = true;
+                    blackjackStandButton.disabled = true;
+                    blackjackDoubleButton.disabled = true;
+                    blackjackResetButton.classList.remove('hidden');
+                }
+                console.log('[BJ_UI] updateUI finished.');
+            }
+
+            async dealInitialHand() {
+                console.log('[BJ_DEAL] dealInitialHand called.');
+                this.initializeGame(); // Reset game state and deck
+
+                // Handle optional pot/bet inputs
+                const potInput = parseFloat(blackjackPotSizeInitialInput.value);
+                const betInput = parseFloat(blackjackBetAmountInitialInput.value);
+
+                this.currentPotSize = isNaN(potInput) || potInput < 0 ? 0 : potInput;
+                this.currentBetAmount = isNaN(betInput) || betInput < 0 ? 0 : betInput;
+
+                if (potInput < 0 || betInput < 0) {
+                    showMessage("Error: Pot size and bet amount cannot be negative.", 'error');
+                    console.error("[BJ_DEAL] Invalid pot or bet amount.");
+                    return;
+                }
+
+                const parsedPlayerCards = parseCards(blackjackPlayerCardsInitialInput.value);
+                const parsedDealerUpCard = parseCards(blackjackDealerUpCardInitialInput.value);
+
+                if (parsedPlayerCards.length !== 2) {
+                    showMessage("Error: Please enter exactly 2 cards for your hand. Example: 'As 10s' or 'Ace of Spades Ten of Hearts'", 'error');
+                    console.error("[BJ_DEAL] Player cards input invalid length.");
+                    return;
+                }
+                if (parsedDealerUpCard.length !== 1) {
+                    showMessage("Error: Please enter exactly 1 card for the dealer's up card. Example: '7d' or 'Seven of Diamonds'", 'error');
+                    console.error("[BJ_DEAL] Dealer up card input invalid length.");
+                    return;
+                }
+
+                const initialKnownCards = [...parsedPlayerCards, ...parsedDealerUpCard];
+                const duplicateCheck = new Set();
+                for (const card of initialKnownCards) {
+                    if (duplicateCheck.has(card)) {
+                        showMessage(`Error: Duplicate card entered: ${card}. Please ensure all initial cards are unique.`, 'error');
+                        console.error(`[BJ_DEAL] Duplicate card detected: ${card}`);
+                        this.resetGame(); // Reset to allow re-entry
+                        return;
+                    }
+                    duplicateCheck.add(card);
+                }
+                console.log('[BJ_DEAL] Initial known cards (parsed and checked for duplicates):', initialKnownCards);
+
+                // Remove initial cards from the deck
+                for (const card of initialKnownCards) {
+                    const index = this.deck.indexOf(card);
+                    if (index === -1) {
+                        showMessage(`Error: Card entered "${card}" is not available in the deck. This might happen if you entered a duplicate or an incorrect card that doesn't exist.`, 'error');
+                        console.error(`[BJ_DEAL] Card "${card}" not found in deck for removal.`);
+                        this.resetGame();
+                        return;
+                    }
+                    this.deck.splice(index, 1);
+                }
+                console.log(`[BJ_DEAL] Initial cards removed from deck. Remaining deck size: ${this.deck.length}`);
+
+                this.playerHand = parsedPlayerCards;
+                this.dealerHand = parsedDealerUpCard; // Only the up card for now
+
+                // Draw dealer's hidden card from the remaining deck
+                const dealerHoleCard = this.drawCard();
+                if (!dealerHoleCard) {
+                    console.error("[BJ_DEAL] Failed to draw dealer's hole card.");
+                    this.resetGame();
+                    return;
+                }
+                this.dealerHand.push(dealerHoleCard); // Dealer's hidden card
+                console.log('[BJ_DEAL] Player Hand:', this.playerHand, 'Dealer Hand (up + hidden):', this.dealerHand);
+
+                this.isPlayerTurn = true;
+                this.hasDoubledDown = false;
+                await this.updateUI(true); // Pass true to indicate initial deal
+                console.log('[BJ_DEAL] dealInitialHand completed successfully.');
+            }
+
+            async confirmNextAction() {
+                console.log('[BJ_CONFIRM_NEXT] Confirming next action...');
+                const newCard = parseCards(blackjackNewCardInput.value);
+                
+                // Handle optional pot/bet inputs for next action
+                const newPotInput = parseFloat(blackjackPotSizeNextInput.value);
+                const newBetInput = parseFloat(blackjackBetAmountNextInput.value);
+
+                this.currentPotSize = isNaN(newPotInput) || newPotInput < 0 ? 0 : newPotInput;
+                this.currentBetAmount = isNaN(newBetInput) || newBetInput < 0 ? 0 : newBetInput;
+
+                if (newPotInput < 0 || newBetInput < 0) {
+                    showMessage("Error: Pot size and bet amount cannot be negative.", 'error');
+                    console.error("[BJ_CONFIRM_NEXT] Invalid pot or bet amount for next action.");
+                    return;
+                }
+
+                blackjackNewCardInput.value = '';
+
+                if (newCard.length !== 1) {
+                    showMessage("Error: Please enter exactly one card. Example: '2c' or 'Two of Clubs'", 'error');
+                    console.error("[BJ_CONFIRM_NEXT] New card input invalid length.");
+                    return;
+                }
+
+                const cardToAdd = newCard[0];
+
+                const allKnownCards = [...this.playerHand, ...this.dealerHand];
+                if (allKnownCards.includes(cardToAdd)) {
+                    showMessage(`Error: Card ${cardToAdd} is already in play.`, 'error');
+                    console.error(`[BJ_CONFIRM_NEXT] Duplicate card detected for new card: ${cardToAdd}`);
+                    return;
+                }
+                const indexInDeck = this.deck.indexOf(cardToAdd);
+                if (indexInDeck === -1) {
+                    showMessage(`Error: Card ${cardToAdd} is not available in the deck. This might happen if you entered a duplicate or an incorrect card.`, 'error');
+                    console.error(`[BJ_CONFIRM_NEXT] New card "${cardToAdd}" not found in deck.`);
+                    return;
+                }
+                this.deck.splice(indexInDeck, 1);
+                console.log(`[BJ_CONFIRM_NEXT] Card ${cardToAdd} added to player hand. Remaining deck size: ${this.deck.length}`);
+
+
+                this.playerHand.push(cardToAdd);
+
+                blackjackNextActionInputSection.classList.add('hidden');
+
+                // Check for bust immediately after drawing new card
+                const playerValue = this.calculateHandValue(this.playerHand);
+                if (playerValue > 21) {
+                    console.log('[BJ_CONFIRM_NEXT] Player busted after drawing card.');
+                    this.isPlayerTurn = false; // Player's turn ends on bust
+                    await this.updateUI(); // Update UI to show bust outcome
+                    // Dealer's turn will be called from updateUI based on playerValue > 21
+                } else if (this.currentAction === 'double') {
+                    this.isPlayerTurn = false; // Player's turn ends after double down
+                    await this.dealerTurn();
+                } else { // It was a hit and not a bust
+                    await this.updateUI(); // Re-analyze with new hand
+                }
+                console.log('[BJ_CONFIRM_NEXT] Action confirmed and re-analysis/dealer turn initiated.');
+            }
+
+            async dealerTurn() {
+                console.log('[BJ_DEALER] Dealer turn started.');
+                showLoading(true);
+                this.dealerHandRevealed = true; // Reveal dealer's hand when their turn starts
+                // Reveal dealer's hole card
+                displayBlackjackDealerHand.innerHTML = prettyCards(this.dealerHand);
+                displayBlackjackDealerScore.textContent = this.calculateHandValue(this.dealerHand);
+                await new Promise(resolve => setTimeout(resolve, 1000)); // Pause for effect
+
+                // Simulate dealer drawing until 17 or more
+                while (this.calculateHandValue(this.dealerHand) < 17) {
+                    const drawnCard = this.drawCard();
+                    if (!drawnCard) {
+                        console.warn("[BJ_DEALER] Ran out of cards for dealer to draw.");
+                        break;
+                    }
+                    this.dealerHand.push(drawnCard);
+                    console.log(`[BJ_DEALER] Dealer drew: ${drawnCard}. Hand now: ${this.dealerHand.join(', ')}`);
+                    await new Promise(resolve => setTimeout(resolve, 500)); // Small pause for visual effect
+                    displayBlackjackDealerHand.innerHTML = prettyCards(this.dealerHand); // Update dealer hand visually
+                    displayBlackjackDealerScore.textContent = this.calculateHandValue(this.dealerHand);
+                }
+                console.log('[BJ_DEALER] Dealer turn finished. Final dealer hand:', this.dealerHand);
+
+                await this.updateUI(); // Final UI update with game outcome
+                showLoading(false);
+                console.log('[BJ_DEALER] Dealer turn completed.');
+            }
+
+            resetGame() {
+                console.log('[BJ_RESET] Resetting Blackjack game UI and state.');
+                this.playerHand = [];
+                this.dealerHand = [];
+                this.deck = [];
+                this.isPlayerTurn = true;
+                this.hasDoubledDown = false;
+                this.currentAction = '';
+                this.dealerHandRevealed = false; // Reset on new game
+
+                blackjackPotSizeInitialInput.value = ''; // Made optional
+                blackjackBetAmountInitialInput.value = ''; // Made optional
+                blackjackPlayerCardsInitialInput.value = '';
+                blackjackDealerUpCardInitialInput.value = '';
+
+                blackjackPotSizeNextInput.value = ''; // Made optional
+                blackjackBetAmountNextInput.value = ''; // Made optional
+                blackjackNewCardInput.value = '';
+
+                displayBlackjackPotSize.textContent = '';
+                displayBlackjackBetAmount.textContent = '';
+                displayBlackjackPlayerHand.innerHTML = '';
+                displayBlackjackPlayerScore.textContent = '';
+                displayBlackjackDealerHand.innerHTML = '';
+                displayBlackjackDealerScore.textContent = '';
+                displayBlackjackOutcome.textContent = '';
+                displayBlackjackOutcome.classList.add('hidden');
+                displayBlackjackAdvice.textContent = '';
+
+                probHitWin.textContent = probHitPush.textContent = probHitLoss.textContent = '';
+                probStandWin.textContent = probStandPush.textContent = probStandLoss.textContent = '';
+                probDoubleWin.textContent = probDoublePush.textContent = probDoubleLoss.textContent = '';
+
+                blackjackDealButton.disabled = false;
+                blackjackInitialInputSection.classList.remove('hidden');
+                blackjackActionButtons.classList.add('hidden');
+                blackjackNextActionInputSection.classList.add('hidden');
+                blackjackOutputSection.classList.add('hidden');
+                messageBox.classList.add('hidden');
+                initializeCommonDeck(); // Ensure commonDeck is reset for next game
+                console.log('[BJ_RESET] Blackjack game reset completed.');
+            }
+        }
+
+        const blackjackGame = new BlackjackGame(); // Instantiate the game
+
+        // --- Event Listeners ---
+        choosePokerBtn.addEventListener('click', () => {
+            gameMode = 'poker';
+            showScreen('poker-instructions-container');
+        });
+
+        chooseBlackjackBtn.addEventListener('click', () => {
+            gameMode = 'blackjack';
+            showScreen('blackjack-instructions-container');
+        });
+
+        pokerStartGameButton.addEventListener('click', () => {
+            showScreen('poker-app-container');
+            resetPokerGame();
+        });
+        pokerSkipInstructionsButton.addEventListener('click', () => {
+            showScreen('poker-app-container');
+            resetPokerGame();
+        });
+        pokerInstructionsBackToMainBtn.addEventListener('click', backToMainMenu);
+
+
+        blackjackStartGameButton.addEventListener('click', () => {
+            showScreen('blackjack-app-container');
+            blackjackGame.resetGame(); // Use the new reset method
+        });
+        blackjackSkipInstructionsButton.addEventListener('click', () => {
+            showScreen('blackjack-app-container');
+            blackjackGame.resetGame(); // Use the new reset method
+        });
+        blackjackInstructionsBackToMainBtn.addEventListener('click', backToMainMenu);
+
+        // Blackjack Game Event Listeners
+        blackjackDealButton.addEventListener('click', async () => {
+            try {
+                await blackjackGame.dealInitialHand();
+            } catch (error) {
+                console.error("[BLACKJACK_DEAL_ERROR] Error during initial deal:", error);
+                showMessage(`An unexpected error occurred during deal: ${error.message}`, 'error');
+            }
+        });
+
+        blackjackConfirmNextActionButton.addEventListener('click', async () => {
+            try {
+                await blackjackGame.confirmNextAction();
+            } catch (error) {
+                console.error("[BLACKJACK_CONFIRM_ERROR] Error during confirming next action:", error);
+                showMessage(`An unexpected error occurred: ${error.message}`, 'error');
+            }
+        });
+
+        blackjackHitButton.addEventListener('click', () => {
+            console.log('[BLACKJACK_ACTION] Hit button clicked.');
+            blackjackGame.currentAction = 'hit';
+            blackjackNextActionInputSection.classList.remove('hidden');
+            blackjackNextActionInputSection.classList.add('fade-in');
+            // Update the next action pot/bet inputs with current game values for user convenience
+            blackjackPotSizeNextInput.value = blackjackGame.currentPotSize;
+            blackjackBetAmountNextInput.value = blackjackGame.currentBetAmount;
+            blackjackNewCardInput.focus();
+            blackjackActionButtons.classList.add('hidden');
+        });
+
+        blackjackStandButton.addEventListener('click', async () => {
+            console.log('[BLACKJACK_ACTION] Stand button clicked. Ending analysis here.');
+            blackjackGame.isPlayerTurn = false; // Player's turn ends
+            blackjackGame.dealerHandRevealed = false; // Ensure dealer's hand stays hidden
+            blackjackActionButtons.classList.add('hidden');
+            blackjackNextActionInputSection.classList.add('hidden'); // Hide next action input if it was visible
+            
+            // Directly update UI to show stand outcome without dealer's turn
+            await blackjackGame.updateUI(); 
+            console.log('[BLACKJACK_ACTION] Stand action processed. UI updated.');
+        });
+
+        blackjackDoubleButton.addEventListener('click', () => {
+            console.log('[BLACKJACK_ACTION] Double Down button clicked.');
+            if (blackjackGame.playerHand.length !== 2) {
+                showMessage("You can only double down on your initial two cards.", 'error');
+                console.warn("[BLACKJACK_ACTION] Double down attempted with more than 2 cards.");
+                return;
+            }
+            blackjackGame.hasDoubledDown = true;
+            blackjackGame.currentAction = 'double';
+            blackjackNextActionInputSection.classList.remove('hidden');
+            blackjackNextActionInputSection.classList.add('fade-in');
+            // Double the bet for double down in the input field for user to confirm
+            blackjackPotSizeNextInput.value = blackjackGame.currentPotSize * 2;
+            blackjackBetAmountNextInput.value = blackjackGame.currentBetAmount * 2;
+            blackjackNewCardInput.focus();
+            blackjackActionButtons.classList.add('hidden');
+        });
+
+        blackjackResetButton.addEventListener('click', () => {
+            blackjackGame.resetGame();
+        });
+        blackjackBackToMainBtn.addEventListener('click', backToMainMenu);
+
+
+        // Poker Game Event Listeners (Existing, kept as is)
+        analyzePokerPreflopBtn.addEventListener('click', async () => {
+            const parsedHole = parseCards(pokerHoleCardsInput.value);
+            if (parsedHole.length !== 2) {
+                showMessage("Error: Please enter exactly 2 hole cards. Example: 'As Ks' or 'Ace of Spades King of Spades'", 'error');
+                return;
+            }
+            pokerHoleCards = parsedHole;
+
+            // Handle optional pot/bet inputs for Poker
+            const potInput = parseFloat(pokerPotSizePreflopInput.value);
+            const betInput = parseFloat(pokerBetSizePreflopInput.value);
+
+            pokerCurrentPotSize = isNaN(potInput) || potInput < 0 ? 0 : potInput;
+            pokerCurrentBetSize = isNaN(betInput) || betInput < 0 ? 0 : betInput;
+
+            if (potInput < 0 || betInput < 0) {
+                showMessage("Error: Pot size and bet amount cannot be negative.", 'error');
+                return;
+            }
+
+            const knownCards = [...pokerHoleCards];
+            const duplicateCheck = new Set();
+            for (const card of knownCards) {
+                if (duplicateCheck.has(card)) {
+                    showMessage(`Error: Duplicate card entered: ${card}. Please ensure all cards are unique.`, 'error');
+                    return;
+                }
+                duplicateCheck.add(card);
+            }
+
+            for (const card of pokerHoleCards) {
+                if (!commonDeck.includes(card)) {
+                    showMessage(`Error: Invalid card entered: ${card}. Please check your card format.`, 'error');
+                    return;
+                }
+            }
+
+            commonDeck = commonDeck.filter(card => !pokerHoleCards.includes(card));
+
+            await updatePokerStatus();
+            pokerPreflopInputsDiv.classList.add('hidden');
+            pokerFlopInputsDiv.classList.remove('hidden');
+            pokerFlopInputsDiv.classList.add('fade-in');
+            pokerGameStage = 'flop';
+        });
+
+        pokerAddFlopBtn.addEventListener('click', async () => {
+            const parsedFlop = parseCards(pokerFlopCardsInput.value);
+            if (parsedFlop.length !== 3) {
+                showMessage("Error: Please enter exactly 3 flop cards. Example: '5s 6d 7c' or 'Five of Spades Six of Diamonds Seven of Clubs'", 'error');
+                return;
+            }
+
+            // Handle optional pot/bet inputs for Poker
+            const potInput = parseFloat(pokerPotSizeFlopInput.value);
+            const betInput = parseFloat(pokerBetSizeFlopInput.value);
+
+            pokerCurrentPotSize = isNaN(potInput) || potInput < 0 ? 0 : potInput;
+            pokerCurrentBetSize = isNaN(betInput) || betInput < 0 ? 0 : betInput;
+
+            if (potInput < 0 || betInput < 0) {
+                showMessage("Error: Pot size and bet amount cannot be negative.", 'error');
+                return;
+            }
+
+            const knownCards = [...pokerHoleCards, ...pokerBoardCards, ...parsedFlop];
+            const duplicateCheck = new Set();
+            for (const card of knownCards) {
+                if (duplicateCheck.has(card)) {
+                    showMessage(`Error: Duplicate card entered: ${card}. Please ensure all cards are unique.`, 'error');
+                    return;
+                }
+                duplicateCheck.add(card);
+            }
+            for (const card of parsedFlop) {
+                if (!commonDeck.includes(card)) {
+                    showMessage(`Error: Invalid card entered or card already in play: ${card}.`, 'error');
+                    return;
+                }
+            }
+            commonDeck = commonDeck.filter(card => !parsedFlop.includes(card));
+
+            pokerBoardCards = [...parsedFlop];
+            await updatePokerStatus();
+            pokerFlopInputsDiv.classList.add('hidden');
+            pokerTurnInputsDiv.classList.remove('hidden');
+            pokerTurnInputsDiv.classList.add('fade-in');
+            pokerGameStage = 'turn';
+        });
+
+        pokerAddTurnBtn.addEventListener('click', async () => {
+            const parsedTurn = parseCards(pokerTurnCardInput.value);
+            if (parsedTurn.length !== 1) {
+                showMessage("Error: Please enter exactly 1 turn card. Example: 'Ah' or 'Ace of Hearts'", 'error');
+                return;
+            }
+
+            // Handle optional pot/bet inputs for Poker
+            const potInput = parseFloat(pokerPotSizeTurnInput.value);
+            const betInput = parseFloat(pokerBetSizeTurnInput.value);
+
+            pokerCurrentPotSize = isNaN(potInput) || potInput < 0 ? 0 : potInput;
+            pokerCurrentBetSize = isNaN(betInput) || betInput < 0 ? 0 : betInput;
+
+            if (potInput < 0 || betInput < 0) {
+                showMessage("Error: Pot size and bet amount cannot be negative.", 'error');
+                return;
+            }
+
+            const knownCards = [...pokerHoleCards, ...pokerBoardCards, ...parsedTurn];
+            const duplicateCheck = new Set();
+            for (const card of knownCards) {
+                if (duplicateCheck.has(card)) {
+                    showMessage(`Error: Duplicate card entered: ${card}. Please ensure all cards are unique.`, 'error');
+                    return;
+                }
+                duplicateCheck.add(card);
+            }
+            for (const card of parsedTurn) {
+                if (!commonDeck.includes(card)) {
+                    showMessage(`Error: Invalid card entered or card already in play: ${card}.`, 'error');
+                    return;
+                }
+            }
+            commonDeck = commonDeck.filter(card => !parsedTurn.includes(card));
+
+            pokerBoardCards = [...pokerBoardCards, ...parsedTurn];
+            await updatePokerStatus();
+            pokerTurnInputsDiv.classList.add('hidden');
+            pokerRiverInputsDiv.classList.remove('hidden');
+            pokerRiverInputsDiv.classList.add('fade-in');
+            pokerGameStage = 'river';
+        });
+
+        pokerAddRiverBtn.addEventListener('click', async () => {
+            const parsedRiver = parseCards(pokerRiverCardInput.value);
+            if (parsedRiver.length !== 1) {
+                showMessage("Error: Please enter exactly 1 river card. Example: 'Kd' or 'King of Diamonds'", 'error');
+                return;
+            }
+
+            // Handle optional pot/bet inputs for Poker
+            const potInput = parseFloat(pokerPotSizeRiverInput.value);
+            const betInput = parseFloat(pokerBetSizeRiverInput.value);
+
+            pokerCurrentPotSize = isNaN(potInput) || potInput < 0 ? 0 : potInput;
+            pokerCurrentBetSize = isNaN(betInput) || betInput < 0 ? 0 : betInput;
+
+            if (potInput < 0 || betInput < 0) {
+                showMessage("Error: Pot size and bet amount cannot be negative.", 'error');
+                return;
+            }
+
+            const knownCards = [...pokerHoleCards, ...pokerBoardCards, ...parsedRiver];
+            const duplicateCheck = new Set();
+            for (const card of knownCards) {
+                if (duplicateCheck.has(card)) {
+                    showMessage(`Error: Duplicate card entered: ${card}. Please ensure all cards are unique.`, 'error');
+                    return;
+                }
+                duplicateCheck.add(card);
+            }
+            for (const card of parsedRiver) {
+                if (!commonDeck.includes(card)) {
+                    showMessage(`Error: Invalid card entered or card already in play: ${card}.`, 'error');
+                    return;
+                }
+            }
+            commonDeck = commonDeck.filter(card => !parsedRiver.includes(card));
+
+            pokerBoardCards = [...pokerBoardCards, ...parsedRiver];
+            await updatePokerStatus();
+            pokerRiverInputsDiv.classList.add('hidden');
+        });
+
+        pokerResetBtn.addEventListener('click', resetPokerGame);
+        pokerBackToMainBtn.addEventListener('click', backToMainMenu);
+
+        // Initial setup on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            showScreen('start-screen');
+        });
+    </script>
+</body>
+</html>
